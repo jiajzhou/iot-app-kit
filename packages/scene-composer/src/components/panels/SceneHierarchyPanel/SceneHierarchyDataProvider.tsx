@@ -98,19 +98,16 @@ const SceneHierarchyDataProvider: FC<SceneHierarchyDataProviderProps> = ({ selec
   const log = useLogger('SceneHierarchyDataProvider');
 
   const sceneComposerId = useSceneComposerId();
-  const {
-    document,
-    selectedSceneNodeRef,
-    getSceneNodeByRef,
-    setSelectedSceneNodeRef,
-    updateSceneNodeInternal,
-    getObject3DBySceneNodeRef,
-    setCameraTarget,
-    removeSceneNode,
-    isEditing,
-  } = useStore(sceneComposerId)((state) => state);
 
-  const { nodeMap } = document;
+  const nodeMap = useStore(sceneComposerId)((state) => state.document.nodeMap);
+  const selectedSceneNodeRef = useStore(sceneComposerId)((state) => state.selectedSceneNodeRef);
+  const getSceneNodeByRef = useStore(sceneComposerId)((state) => state.getSceneNodeByRef);
+  const setSelectedSceneNodeRef = useStore(sceneComposerId)((state) => state.setSelectedSceneNodeRef);
+  const updateSceneNodeInternal = useStore(sceneComposerId)((state) => state.updateSceneNodeInternal);
+  const getObject3DBySceneNodeRef = useStore(sceneComposerId)((state) => state.getObject3DBySceneNodeRef);
+  const isEditing = useStore(sceneComposerId)((state) => state.isEditing);
+  const removeSceneNode = useStore(sceneComposerId)((state) => state.removeSceneNode);
+  const setCameraTarget = useStore(sceneComposerId)((state) => state.setCameraTarget);
 
   const rootNodeRefs = Object.values(nodeMap)
     .filter((item) => !item.parentRef && (!isEnvironmentNode(item) || isEditing()))
@@ -139,6 +136,7 @@ const SceneHierarchyDataProvider: FC<SceneHierarchyDataProviderProps> = ({ selec
 
   const getChildNodes = useCallback(
     async (parentRef?: string) => {
+      const nodeMap = useStore(sceneComposerId).getState().document.nodeMap;
       const results = Object.values(nodeMap)
         .filter((node) => node.parentRef === parentRef)
         .map((item) =>
@@ -148,7 +146,7 @@ const SceneHierarchyDataProvider: FC<SceneHierarchyDataProviderProps> = ({ selec
 
       return Promise.resolve(results);
     },
-    [getSceneNodeByRef, sceneComposerId, nodeMap, rootNodeRefs, log],
+    [sceneComposerId],
   );
 
   const activate = useCallback(
