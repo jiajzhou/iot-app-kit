@@ -113,7 +113,7 @@ const SceneLayout: FC<SceneLayoutProps> = ({ isViewing, onPointerMissed, Loading
       modalContent={<MessageModal />}
       header={!isViewing && <MenuBar />}
       leftPanel={isViewing ? viewingModeLeftPanel : leftPanel}
-      rightPanel={!isViewing && rightPanel}
+      rightPanel={rightPanel}
       topBar={<TopBar />}
     />
   );
