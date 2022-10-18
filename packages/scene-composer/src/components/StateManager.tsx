@@ -41,6 +41,7 @@ const StateManager: React.FC<SceneComposerInternalProps> = ({
   showAssetBrowserCallback,
   onWidgetClick,
   onSelectionChanged,
+  knowledgeGraphInterface,
   dataStreams,
   queries,
   viewport,
@@ -55,6 +56,7 @@ const StateManager: React.FC<SceneComposerInternalProps> = ({
     setEditorConfig,
     setDataInput,
     setDataBindingTemplate,
+    setKnowledgeGraphInterface,
     loadScene,
     sceneLoaded,
     selectedSceneNodeRef,
@@ -282,6 +284,12 @@ const StateManager: React.FC<SceneComposerInternalProps> = ({
       setDataBindingTemplate(dataBindingTemplate);
     }
   }, [dataBindingTemplate]);
+
+  useEffect(() => {
+    if (knowledgeGraphInterface) {
+      setKnowledgeGraphInterface(knowledgeGraphInterface);
+    }
+  }, [knowledgeGraphInterface]);
 
   // Throw error to be captured by ErrorBoundary and render error view
   useEffect(() => {

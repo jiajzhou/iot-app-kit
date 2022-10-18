@@ -36,6 +36,7 @@ export function useGLTF<T extends string | string[]>(
     }),
     onProgress,
   );
+  globalThis.gltf = gltf;
   return gltf;
 }
 

@@ -22,6 +22,7 @@ import {
   KnownComponentType,
   WidgetClickEventCallback,
   ISubModelRefComponent,
+  KnowledgeGraphInterface,
 } from '../interfaces';
 import { MapControls as MapControlsImpl, OrbitControls as OrbitControlsImpl } from '../three/OrbitControls';
 

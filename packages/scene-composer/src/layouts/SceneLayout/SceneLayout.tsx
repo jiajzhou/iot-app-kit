@@ -11,6 +11,7 @@ import { StaticLayout } from '../StaticLayout';
 import { WebGLCanvasManager } from '../../components/WebGLCanvasManager';
 import { FloatingToolbar } from '../../components/toolbars';
 import {
+  GraphPanel,
   SceneHierarchyPanel,
   SceneNodeInspectorPanel,
   SceneRulesPanel,
@@ -74,6 +75,7 @@ const SceneLayout: FC<SceneLayoutProps> = ({ isViewing, onPointerMissed, Loading
   };
   const rightPanelProps = {
     [intl.formatMessage({ defaultMessage: 'Inspector', description: 'Panel Tab title' })]: <SceneNodeInspectorPanel />,
+    Graph: <GraphPanel />,
   };
 
   const leftPanel = <LeftPanel {...leftPanelEditModeProps} />;

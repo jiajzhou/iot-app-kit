@@ -10,12 +10,8 @@
         "sel_comp": "temperatureSensor2"
       },
       "fieldMapping": {
-        "entityId": [
-          "sel_entity"
-        ],
-        "componentName": [
-          "sel_comp"
-        ]
+        "entityId": ["sel_entity"],
+        "componentName": ["sel_comp"]
       }
     }
   },
@@ -23,275 +19,23 @@
     {
       "name": "Pallet Jack",
       "transform": {
-        "position": [
-          1,
-          0,
-          0
-        ],
-        "rotation": [
-          0,
-          0,
-          0
-        ],
-        "scale": [
-          1,
-          1,
-          1
-        ]
+        "position": [1, 0, 0],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
       },
-      "transformConstraint": {
-
-      },
-      "children": [
-        1,
-        4,
-        5
-      ],
+      "transformConstraint": {},
       "components": [
         {
           "type": "ModelRef",
-          "uri": "PALLET_JACK.glb",
+          "uri": "bg1.glb",
           "modelType": "GLB",
           "unitOfMeasure": "meters"
         }
       ],
-      "properties": {
-
-      }
-    },
-    {
-      "name": "Obstruction Alarm",
-      "transform": {
-        "position": [
-          0,
-          2.2462426122230426,
-          0
-        ],
-        "rotation": [
-          0,
-          0,
-          0
-        ],
-        "scale": [
-          1,
-          1,
-          1
-        ]
-      },
-      "transformConstraint": {
-
-      },
-      "components": [
-        {
-          "type": "Tag",
-          "ruleBasedMapId": "sampleTimeSeriesIconRule",
-          "valueDataBinding": {
-            "dataBindingContext": {
-              "entityId": "${sel_entity}",
-              "componentName": "${sel_comp}",
-              "propertyName": "temperature"
-            }
-          },
-          "navLink": {
-            "destination": "http://localhost:4300/d/KKIARDInk/new-dashboard-copy",
-            "params": {
-              "foo": "bar"
-            }
-          }
-        }
-      ],
-      "properties": {
-
-      }
-    },
-    {
-      "name": "directional light",
-      "transform": {
-        "position": [
-          -5,
-          10,
-          10
-        ],
-        "rotation": [
-          0,
-          0,
-          0
-        ],
-        "scale": [
-          1,
-          1,
-          1
-        ]
-      },
-      "transformConstraint": {
-
-      },
-      "components": [
-        {
-          "type": "Light",
-          "lightType": "Directional",
-          "lightSettings": {
-            "color": 16777215,
-            "intensity": 1,
-            "castShadow":true
-          }
-        }
-      ],
-      "properties": {
-
-      }
-    },
-    {
-      "name": "ambient light",
-      "transform": {
-        "position": [
-          10,
-          10,
-          10
-        ],
-        "rotation": [
-          0,
-          0,
-          0
-        ],
-        "scale": [
-          1,
-          1,
-          1
-        ]
-      },
-      "transformConstraint": {
-
-      },
-      "components": [
-        {
-          "type": "Light",
-          "lightType": "Ambient",
-          "lightSettings": {
-            "color": 16777215,
-            "intensity": 0.2
-          }
-        }
-      ],
-      "properties": {
-
-      }
-    },
-    {
-      "name": "Lift Direction",
-      "transform": {
-        "position": [
-          0.026177569273909795,
-          0.12487268539819854,
-          -0.6475704349193628
-        ],
-        "rotation": [
-          3.0891109067350975,
-          1.5423817718730837,
-          -3.089601298590836
-        ],
-        "scale": [
-          1.3444898056140844,
-          1,
-          1.008107454341504
-        ]
-      },
-      "transformConstraint": {
-
-      },
-      "components": [
-        {
-          "type": "MotionIndicator",
-          "shape": "LinearPlane",
-          "valueDataBindings": {
-            "foregroundColor": {
-
-            }
-          },
-          "config": {
-            "numOfRepeatInY": 2,
-            "backgroundColorOpacity": 1,
-            "defaultSpeed": "0.5",
-            "defaultForegroundColor": "#29f502"
-          }
-        }
-      ],
-      "properties": {
-
-      }
-    },
-    {
-      "name": "Fork Lift",
-      "transform": {
-        "position": [
-          0,
-          0,
-          0
-        ],
-        "rotation": [
-          0,
-          0,
-          0
-        ],
-        "scale": [
-          1,
-          1,
-          1
-        ]
-      },
-      "transformConstraint": {
-
-      },
-      "components": [
-        {
-          "parentRef": "1BB44716-4325-436C-A098-CD2A53A8336C",
-          "selector": "Scene491",
-          "type": "SubModelRef"
-        }
-      ],
-      "properties": {
-
-      }
-    },
-    {
-      "name": "Camera1",
-      "transform": {
-        "position": [
-          3.8592914668132337,
-          1.660816595658845,
-          -0.29774633590225036
-        ],
-        "rotation": [
-          -1.6451249704899187,
-          1.4253822264470961,
-          1.6459148400213455
-        ],
-        "scale": [
-          1,
-          1,
-          1
-        ]
-      },
-      "transformConstraint": {
-
-      },
-      "components": [
-        {
-          "type": "Camera",
-          "cameraIndex": 0
-        }
-      ],
-      "properties": {
-
-      }
+      "properties": {}
     }
   ],
-  "rootNodeIndexes": [
-    0,
-    2,
-    3,
-    6
-  ],
+  "rootNodeIndexes": [0],
   "cameras": [
     {
       "cameraType": "Perspective",

@@ -14,6 +14,14 @@ export interface SceneViewerConfig {
   locale?: string;
 }
 
+// TODO: refine the interface
+export type TwinMakerEntity = any;
+
+export interface KnowledgeGraphInterface {
+  findEntitiesByName(name: string): Promise<TwinMakerEntity[]>;
+  findRelatedEntities(entity: TwinMakerEntity, numberOfHops: number): Promise<TwinMakerEntity[]>;
+}
+
 /**
  * @uri URI string
  * @return it's null if GetSceneObjectFunction can't handle the URI type, otherwise, a promise will be returned.
@@ -27,6 +35,8 @@ export interface SceneViewerPropsShared {
 
   onSelectionChanged?: SelectionChangedEventCallback;
   onWidgetClick?: WidgetClickEventCallback;
+
+  knowledgeGraphInterface: KnowledgeGraphInterface;
 
   /**
    * The data to be visualized by the composer.

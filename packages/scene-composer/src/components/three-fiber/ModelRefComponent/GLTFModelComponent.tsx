@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import React, { useContext, useEffect, useMemo, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { invalidate, ThreeEvent, useFrame, useThree } from '@react-three/fiber';
 import { SkeletonUtils } from 'three-stdlib';
 import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader';
@@ -25,10 +25,15 @@ import {
 
 import { useGLTF } from './GLTFLoader';
 
-function processObject(component: IModelRefComponentInternal, obj: THREE.Object3D, options: { maxAnisotropy: number }) {
+function processObject(
+  component: IModelRefComponentInternal,
+  obj: THREE.Object3D,
+  options: { maxAnisotropy: number; highlightedNodeRefs?: string[] },
+) {
   cloneMaterials(obj);
   acceleratedRaycasting(obj);
   enableShadow(component, obj, options.maxAnisotropy);
+
   obj.userData.isOriginal = true; // This is important to the SubModelSelection tool, it's used to filter out geomtry we've added with our
 }
 
@@ -50,7 +55,10 @@ export const GLTFModelComponent: React.FC<GLTFModelProps> = ({
   const uriModifier = useStore(sceneComposerId)((state) => state.getEditorConfig().uriModifier);
   const appendSceneNode = useStore(sceneComposerId)((state) => state.appendSceneNode);
   const getObject3DBySceneNodeRef = useStore(sceneComposerId)((state) => state.getObject3DBySceneNodeRef);
-  const { getSceneNodeByRef } = useStore(sceneComposerId)((state) => state);
+  const getSceneNodeByRef = useStore(sceneComposerId)((state) => state.getSceneNodeByRef);
+  const highlightedNodeRefs = useStore(sceneComposerId)((state) => state.noHistoryStates.highlightedNodeRefs);
+  const needUpdate = useRef(false);
+
   const {
     isEditing,
     addingWidget,
@@ -118,34 +126,67 @@ export const GLTFModelComponent: React.FC<GLTFModelProps> = ({
 
   const clonedModelScene = useMemo(() => {
     const result = SkeletonUtils.clone(gltf.scene);
-    result.traverse((obj) => processObject(component, obj, { maxAnisotropy }));
+    result.traverse((obj) => processObject(component, obj, { maxAnisotropy, highlightedNodeRefs }));
 
+    // console.log('dddddddddddddddd');
     invalidate();
     return result;
-  }, [gltf, component]);
+  }, [gltf, component, highlightedNodeRefs]);
+
+  useEffect(() => {
+    setTimeout(() => {
+      needUpdate.current = true;
+    }, 100);
+  }, [gltf, component, highlightedNodeRefs]);
 
   useFrame(() => {
     // TODO: Optimize this loop. Currently, the shadow setting is not applied when only setting in the clonedModelScene
     // creation function. To work around the issue, we'll update the shadow setting for each render loop.
-    clonedModelScene.traverse((obj) => {
-      enableShadow(component, obj, maxAnisotropy);
 
-      if ((obj as THREE.Mesh).material) {
-        const mesh = obj as THREE.Mesh;
+    if (needUpdate.current && highlightedNodeRefs) {
+      clonedModelScene.traverse((obj) => {
+        enableShadow(component, obj, maxAnisotropy);
 
-        if (Array.isArray(mesh.material)) {
-          mesh.material.forEach((material) => {
-            material.colorWrite = !hiddenWhileImmersive;
-          });
+        // console.log('!!!!!!!!!process obj', highlightedNodeRefs);
+        // console.log('!!!!!!!!!!!!!!!!!!!!!!!', highlightedNodeRefs);
+        if (obj.userData.elementId && highlightedNodeRefs.indexOf(obj.userData.elementId) !== -1) {
+          if (obj instanceof THREE.Mesh) {
+            // console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
+            obj.material.color = new THREE.Color('red');
+            // const vv = new THREE.Vector3();
+            // const a = obj.getWorldPosition(vv);
+            // console.log(obj);
+            obj.material.needsUpdate = true;
+          } else {
+            // console.log('cccccccccccccccccccccc');
+          }
         } else {
-          (mesh.material as THREE.Material).colorWrite = !hiddenWhileImmersive;
+          // console.log('bbbbbbbbbbbbbbbbbbbbbbbbbb');
+          if (obj instanceof THREE.Mesh) {
+            obj.material.transparent = true;
+            obj.material.opacity = 0.2;
+            obj.material.needsUpdate = true;
+          }
         }
-      }
-    });
-
-    if (Date.now() - lastPointerMove >= CURSOR_VISIBILITY_TIMEOUT && !addingWidget && cursorVisible) {
-      setCursorVisible(false);
+      });
+      needUpdate.current = false;
     }
+    // if ((obj as THREE.Mesh).material) {
+    //   const mesh = obj as THREE.Mesh;
+
+    //   if (Array.isArray(mesh.material)) {
+    //     mesh.material.forEach((material) => {
+    //       material.colorWrite = !hiddenWhileImmersive;
+    //     });
+    //   } else {
+    //     (mesh.material as THREE.Material).colorWrite = !hiddenWhileImmersive;
+    //   }
+    // }
+    // });
+
+    // if (Date.now() - lastPointerMove >= CURSOR_VISIBILITY_TIMEOUT && !addingWidget && cursorVisible) {
+    //   setCursorVisible(false);
+    // }
   });
 
   let scale: Vector3 = [1, 1, 1];
