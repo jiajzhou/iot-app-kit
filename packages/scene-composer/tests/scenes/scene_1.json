@@ -17,9 +17,9 @@
   },
   "nodes": [
     {
-      "name": "Pallet Jack",
+      "name": "Site",
       "transform": {
-        "position": [1, 0, 0],
+        "position": [0, 40, 0],
         "rotation": [0, 0, 0],
         "scale": [1, 1, 1]
       },
@@ -27,7 +27,25 @@
       "components": [
         {
           "type": "ModelRef",
-          "uri": "bg1.glb",
+          "uri": "SFS-B1-draco-1365902/tileset.json",
+          "modelType": "Tiles3D",
+          "unitOfMeasure": "meters"
+        }
+      ],
+      "properties": {}
+    },
+    {
+      "name": "Dining Room",
+      "transform": {
+        "position": [0, 40, 0],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "transformConstraint": {},
+      "components": [
+        {
+          "type": "ModelRef",
+          "uri": "SFS-dining.glb",
           "modelType": "GLB",
           "unitOfMeasure": "meters"
         }
@@ -35,7 +53,7 @@
       "properties": {}
     }
   ],
-  "rootNodeIndexes": [0],
+  "rootNodeIndexes": [0, 1],
   "cameras": [
     {
       "cameraType": "Perspective",

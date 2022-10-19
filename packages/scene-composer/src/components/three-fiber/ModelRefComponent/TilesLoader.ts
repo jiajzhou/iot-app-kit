@@ -32,6 +32,7 @@ export function useTiles<T extends string>(path: T, uriModifier?: URIModifier) {
       const uriString = fixNasaUriBug(uri);
       return uriModifier?.(uriString) ?? uriString;
     };
+    tilesRenderer.loadSiblings = false;
 
     const loader = new TwinMakerGLTFLoader(tilesRenderer.manager);
     setupTwinMakerGLTFLoader(loader);
