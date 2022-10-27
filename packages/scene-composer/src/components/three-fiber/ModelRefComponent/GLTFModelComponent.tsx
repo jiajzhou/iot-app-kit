@@ -28,7 +28,7 @@ import { useGLTF } from './GLTFLoader';
 function processObject(
   component: IModelRefComponentInternal,
   obj: THREE.Object3D,
-  options: { maxAnisotropy: number; highlightedNodeRefs?: string[] },
+  options: { maxAnisotropy: number },
 ) {
   cloneMaterials(obj);
   acceleratedRaycasting(obj);
@@ -126,12 +126,12 @@ export const GLTFModelComponent: React.FC<GLTFModelProps> = ({
 
   const clonedModelScene = useMemo(() => {
     const result = SkeletonUtils.clone(gltf.scene);
-    result.traverse((obj) => processObject(component, obj, { maxAnisotropy, highlightedNodeRefs }));
+    result.traverse((obj) => processObject(component, obj, { maxAnisotropy }));
 
     // console.log('dddddddddddddddd');
     invalidate();
     return result;
-  }, [gltf, component, highlightedNodeRefs]);
+  }, [gltf, component]);
 
   useEffect(() => {
     setTimeout(() => {
