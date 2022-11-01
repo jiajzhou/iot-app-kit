@@ -19,7 +19,7 @@ import {
   setMetricRecorder,
 } from '../common/GlobalSettings';
 import { useSceneComposerId } from '../common/sceneComposerIdContext';
-import { IAnchorComponentInternal, ICameraComponentInternal, SceneComposerOperationTypeMap, useStore } from '../store';
+import { IAnchorComponentInternal, ICameraComponentInternal, IModelRefComponentInternal, ISubModelRefComponentInternal, SceneComposerOperationTypeMap, useStore } from '../store';
 import { createStandardUriModifier } from '../utils/uriModifiers';
 import sceneDocumentSnapshotCreator from '../utils/sceneDocumentSnapshotCreator';
 import { SceneLayout } from '../layouts/SceneLayout';
@@ -63,6 +63,8 @@ const StateManager: React.FC<SceneComposerInternalProps> = ({
     setSelectedSceneNodeRef,
     getSceneNodeByRef,
     getObject3DBySceneNodeRef,
+    selectedObject3D,
+    setSelectedEntity,
   } = useStore(sceneComposerId)((state) => state);
   const [sceneContentUri, setSceneContentUri] = useState<string>('');
   const [sceneContent, setSceneContent] = useState<string>('');
@@ -122,6 +124,8 @@ const StateManager: React.FC<SceneComposerInternalProps> = ({
       const componentTypes = node?.components.map((component) => component.type) ?? [];
 
       const tagComponent = findComponentByType(node, KnownComponentType.Tag) as IAnchorComponentInternal;
+      const modelRefComponent = findComponentByType(node, KnownComponentType.ModelRef) as IModelRefComponentInternal;
+      const subModelRefComponent = findComponentByType(node, KnownComponentType.SubModelRef) as ISubModelRefComponentInternal;
 
       let additionalComponentData: AdditionalComponentData[] | undefined;
       if (tagComponent) {
@@ -133,8 +137,8 @@ const StateManager: React.FC<SceneComposerInternalProps> = ({
               : applyDataBindingTemplate(tagComponent.valueDataBinding, dataBindingTemplate),
           },
         ];
-      }
-
+      } 
+      
       onSelectionChanged({
         componentTypes,
         nodeRef: selectedSceneNodeRef,
@@ -142,6 +146,20 @@ const StateManager: React.FC<SceneComposerInternalProps> = ({
       });
     }
   }, [selectedSceneNodeRef]);
+
+  useEffect(() => {
+    if (selectedObject3D?.userData.elementId) {
+      const elementId = selectedObject3D?.userData.elementId
+      const doAsync = async () => {
+        const entities = await knowledgeGraphInterface.findEntitiesByElementId(elementId);
+        if (entities.length > 0) {
+          console.log('selected entity: ', entities[0]);
+          setSelectedEntity(entities[0]);
+        }
+      }
+      doAsync();
+    }
+  }, [selectedObject3D]);
 
   useEffect(() => {
     const node = getSceneNodeByRef(selectedSceneNodeRef);

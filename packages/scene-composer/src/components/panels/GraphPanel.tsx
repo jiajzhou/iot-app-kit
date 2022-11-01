@@ -1,6 +1,6 @@
 import { debounce } from 'lodash';
 import * as THREE from 'three';
-import React, { useCallback, useContext, useState, useMemo } from 'react';
+import React, { useCallback, useContext, useState, useMemo, useEffect } from 'react';
 import { defineMessages, useIntl } from 'react-intl';
 import { Button, ButtonProps, Checkbox, FormField, Input, SpaceBetween, TextContent } from '@awsui/components-react';
 
@@ -33,6 +33,7 @@ export const GraphPanel: React.FC = () => {
   const selectedSceneNode = getSceneNodeByRef(selectedSceneNodeRef);
   const knowledgeGraphInterface = useStore(sceneComposerId)((state) => state.knowledgeGraphInterface)!;
   const setHighlightedNodeRefs = useStore(sceneComposerId)((state) => state.noHistoryStates.setHighlightedNodeRefs);
+  const selectedEntity = useStore(sceneComposerId)((state) => state.selectedEntity);
   const [searchValue, setSearchValue] = useState('');
 
   const highlightEntities = useCallback((entities: TwinMakerEntity[]) => {
@@ -65,17 +66,19 @@ export const GraphPanel: React.FC = () => {
 
   const findRelatedEntities = useCallback(() => {
     (async () => {
-      const entities = await knowledgeGraphInterface.findEntitiesByName(searchValue);
-      let relatedEntities: TwinMakerEntity[] = [];
-      for (const e of entities) {
-        const related = await knowledgeGraphInterface.findRelatedEntities(e, 2);
-        relatedEntities = relatedEntities.concat(related);
+      if (!!selectedEntity) {
+        const related = await knowledgeGraphInterface.findRelatedEntities(selectedEntity, 2);
+        console.log('found related entities', related);
+        highlightEntities(related);
       }
-      console.log('found related entities', relatedEntities);
-      highlightEntities(relatedEntities);
-      // find related nodeRefs
     })();
   }, [searchValue]);
+
+  useEffect(() => {
+    if (!!selectedEntity?.entityName) {
+      setSearchValue(selectedEntity.entityName);
+    }
+  },[selectedEntity])
 
   return (
     <LogProvider namespace={'SceneNodeInspectorPanel'}>

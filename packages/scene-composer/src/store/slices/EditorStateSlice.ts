@@ -64,10 +64,12 @@ export interface IEditorStateSlice {
   selectedSceneNodeRef?: string;
   selectedSceneSubmodelRef?: SubModelRef;
   highlightedSceneNodeRef?: string;
+  selectedObject3D?: THREE.Object3D;
 
   setSelectedSceneNodeRef(nodeRef?: string): void;
   setSelectedSceneSubmodelRef(subnodeRef?: SubModelRef): void;
   setHighlightedSceneNodeRef(nodeRef?: string): void;
+  setSelectedObject3D(obj?: THREE.Object3D): void;
 
   // Controls states
   transformControls?: TransformControls;
@@ -119,6 +121,7 @@ function createDefaultEditorState() {
     messages: [],
     selectedSceneNodeRef: undefined,
     highlightedSceneNodeRef: undefined,
+    selectedObject3D: undefined,
     transformControls: undefined,
     transformControlMode: 'translate',
     cameraCommand: undefined,
@@ -230,6 +233,13 @@ export const createEditStateSlice = (set: SetState<RootState>, get: GetState<Roo
       set((draft) => {
         draft.highlightedSceneNodeRef = nodeRef;
         draft.lastOperation = 'setHighlightedSceneNodeRef';
+      });
+    },
+
+    setSelectedObject3D(obj?: THREE.Object3D) {
+      set((draft) => {
+        draft.selectedObject3D = obj;
+        draft.lastOperation = 'setSelectedObject3D';
       });
     },
 

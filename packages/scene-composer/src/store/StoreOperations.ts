@@ -7,6 +7,7 @@ export type SceneComposerEditorOperation =
   | 'setSelectedSceneNodeRef'
   | 'setSubModelSelection'
   | 'setHighlightedSceneNodeRef'
+  | 'setSelectedObject3D'
   | 'setLoadingModelState'
   | 'setTransformControlMode'
   | 'setTransformControls'
@@ -37,7 +38,11 @@ export type SceneComposerDocumentOperation =
   | 'setSceneProperty'
   | 'clearTemplatizedDataBindings';
 
-export type SceneComposerDataOperation = 'setDataInput' | 'setDataBindingTemplate';
+export type SceneComposerDataOperation = 
+  | 'setDataInput'
+  | 'setDataBindingTemplate'
+  | 'setKnowledgeGraphInterface'
+  | 'setSelectedEntity';
 
 export type SceneComposerViewOptionOperation = 'toggleMotionIndicatorVisibility';
 
@@ -70,6 +75,7 @@ export const SceneComposerOperationTypeMap: Record<SceneComposerOperation, Opera
   setSelectedSceneNodeRef: 'UPDATE_EDITOR',
   setSubModelSelection: 'UPDATE_EDITOR',
   setHighlightedSceneNodeRef: 'UPDATE_EDITOR',
+  setSelectedObject3D: 'UPDATE_EDITOR',
   setTransformControlMode: 'UPDATE_EDITOR',
   setTransformControls: 'UPDATE_EDITOR',
   setCameraTarget: 'UPDATE_EDITOR',
@@ -87,5 +93,7 @@ export const SceneComposerOperationTypeMap: Record<SceneComposerOperation, Opera
   setLoadingModelState: 'TRANSIENT',
   setDataInput: 'TRANSIENT',
   setDataBindingTemplate: 'TRANSIENT',
+  setKnowledgeGraphInterface: 'TRANSIENT',
+  setSelectedEntity: 'TRANSIENT',
   toggleMotionIndicatorVisibility: 'TRANSIENT',
 };

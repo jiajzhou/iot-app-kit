@@ -68,6 +68,7 @@ export const GLTFModelComponent: React.FC<GLTFModelProps> = ({
     setCursorPosition,
     setCursorLookAt,
     setCursorVisible,
+    setSelectedObject3D,
   } = useEditorState(sceneComposerId);
 
   const [startingPointerPosition, setStartingPointerPosition] = useState<THREE.Vector2>(new THREE.Vector2());
@@ -233,7 +234,11 @@ export const GLTFModelComponent: React.FC<GLTFModelProps> = ({
         handleAddWidget(e);
       }
     }
+    if (e.intersections[0]) {
+      setSelectedObject3D(e.intersections[0].object);
+    }
   };
+  
 
   return (
     <group name={getComponentGroupName(node.ref, 'GLTF_MODEL')} scale={scale} dispose={null}>

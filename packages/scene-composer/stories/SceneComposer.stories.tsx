@@ -251,6 +251,84 @@ const knobsConfigurationDecorator = [
           },
         ]);
       },
+      findEntitiesByElementId: async (elementId: string ) => {
+        return Promise.resolve([
+          {
+            arn: 'arn:aws:iottwinmaker:us-east-1:000503515329:workspace/BMSWorkspace/entity/2e5a36e3-dff5-40a3-9b00-c4cad10f0bd1',
+            creationDate: 1665002559870,
+            entityId: '2e5a36e3-dff5-40a3-9b00-c4cad10f0bd1',
+            entityName: 'Rectangular Duct Transition - Angle 6671378',
+            lastUpdateDate: 1665005849522,
+            workspaceId: 'BMSWorkspace',
+            description: '',
+            components: [
+              {
+                componentName: 'SA_6',
+                componentTypeId: 'bms.revit.mechanical.system.element',
+                properties: [
+                  { propertyName: 'SystemName', propertyValue: 'SA 6' },
+                  { propertyName: 'SystemClassification', propertyValue: 'Supply Air' },
+                ],
+              },
+              {
+                componentName: 'Category',
+                componentTypeId: 'bms.revit.category',
+                properties: [
+                  { propertyName: 'RFT' },
+                  { propertyName: 'RC' },
+                  { propertyName: 'Category', propertyValue: 'Revit Duct Fittings' },
+                  { propertyName: 'RFN' },
+                ],
+              },
+              {
+                componentName: 'Metadata',
+                componentTypeId: 'bms.revit.metadata',
+                properties: [
+                  { propertyName: 'ElementId', propertyValue: '6671378' },
+                  { propertyName: 'ExternalId', propertyValue: '1c4355d1-b2f9-4187-9aa9-2db1396673ed-0065cc12' },
+                ],
+              },
+            ],
+          },
+          {
+            arn: 'arn:aws:iottwinmaker:us-east-1:000503515329:workspace/BMSWorkspace/entity/50baa822-69cf-4796-b539-d0d3a219f4fb',
+            creationDate: 1665002561278,
+            entityId: '50baa822-69cf-4796-b539-d0d3a219f4fb',
+            entityName: 'Rectangular Duct 6671379',
+            lastUpdateDate: 1665005850573,
+            workspaceId: 'BMSWorkspace',
+            description: '',
+            components: [
+              {
+                componentName: 'SA_6',
+                componentTypeId: 'bms.revit.mechanical.system.element',
+                properties: [
+                  { propertyName: 'SystemName', propertyValue: 'SA 6' },
+                  { propertyName: 'SystemClassification', propertyValue: 'Supply Air' },
+                ],
+              },
+              {
+                componentName: 'Category',
+                componentTypeId: 'bms.revit.category',
+                properties: [
+                  { propertyName: 'RFT' },
+                  { propertyName: 'RC' },
+                  { propertyName: 'Category', propertyValue: 'Revit Ducts' },
+                  { propertyName: 'RFN' },
+                ],
+              },
+              {
+                componentName: 'Metadata',
+                componentTypeId: 'bms.revit.metadata',
+                properties: [
+                  { propertyName: 'ElementId', propertyValue: '6671379' },
+                  { propertyName: 'ExternalId', propertyValue: '1c4355d1-b2f9-4187-9aa9-2db1396673ed-0065cc13' },
+                ],
+              },
+            ],
+          },
+        ]);
+      }
     };
     args.sceneLoader = sceneLoader;
     args.sceneId = sceneId;
