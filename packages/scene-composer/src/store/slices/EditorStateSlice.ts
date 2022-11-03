@@ -156,6 +156,7 @@ export const createEditStateSlice = (set: SetState<RootState>, get: GetState<Roo
       showAssetBrowserCallback: undefined,
       onWidgetClick: undefined,
       onSelectionChanged: undefined,
+      onGeoObjectClick: undefined,
     },
 
     getEditorConfig() {

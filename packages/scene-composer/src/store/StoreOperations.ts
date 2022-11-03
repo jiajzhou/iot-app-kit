@@ -38,7 +38,7 @@ export type SceneComposerDocumentOperation =
   | 'setSceneProperty'
   | 'clearTemplatizedDataBindings';
 
-export type SceneComposerDataOperation = 
+export type SceneComposerDataOperation =
   | 'setDataInput'
   | 'setDataBindingTemplate'
   | 'setKnowledgeGraphInterface'

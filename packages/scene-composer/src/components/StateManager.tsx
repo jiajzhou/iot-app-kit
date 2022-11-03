@@ -19,7 +19,14 @@ import {
   setMetricRecorder,
 } from '../common/GlobalSettings';
 import { useSceneComposerId } from '../common/sceneComposerIdContext';
-import { IAnchorComponentInternal, ICameraComponentInternal, IModelRefComponentInternal, ISubModelRefComponentInternal, SceneComposerOperationTypeMap, useStore } from '../store';
+import {
+  IAnchorComponentInternal,
+  ICameraComponentInternal,
+  IModelRefComponentInternal,
+  ISubModelRefComponentInternal,
+  SceneComposerOperationTypeMap,
+  useStore,
+} from '../store';
 import { createStandardUriModifier } from '../utils/uriModifiers';
 import sceneDocumentSnapshotCreator from '../utils/sceneDocumentSnapshotCreator';
 import { SceneLayout } from '../layouts/SceneLayout';
@@ -41,6 +48,7 @@ const StateManager: React.FC<SceneComposerInternalProps> = ({
   showAssetBrowserCallback,
   onWidgetClick,
   onSelectionChanged,
+  onGeoObjectClick,
   knowledgeGraphInterface,
   dataStreams,
   queries,
@@ -95,6 +103,7 @@ const StateManager: React.FC<SceneComposerInternalProps> = ({
       showAssetBrowserCallback,
       onWidgetClick,
       onSelectionChanged,
+      onGeoObjectClick,
     });
   }, [
     config.mode,
@@ -103,6 +112,7 @@ const StateManager: React.FC<SceneComposerInternalProps> = ({
     showAssetBrowserCallback,
     onWidgetClick,
     onSelectionChanged,
+    onGeoObjectClick,
   ]);
 
   useEffect(() => {
@@ -125,7 +135,10 @@ const StateManager: React.FC<SceneComposerInternalProps> = ({
 
       const tagComponent = findComponentByType(node, KnownComponentType.Tag) as IAnchorComponentInternal;
       const modelRefComponent = findComponentByType(node, KnownComponentType.ModelRef) as IModelRefComponentInternal;
-      const subModelRefComponent = findComponentByType(node, KnownComponentType.SubModelRef) as ISubModelRefComponentInternal;
+      const subModelRefComponent = findComponentByType(
+        node,
+        KnownComponentType.SubModelRef,
+      ) as ISubModelRefComponentInternal;
 
       let additionalComponentData: AdditionalComponentData[] | undefined;
       if (tagComponent) {
@@ -137,8 +150,8 @@ const StateManager: React.FC<SceneComposerInternalProps> = ({
               : applyDataBindingTemplate(tagComponent.valueDataBinding, dataBindingTemplate),
           },
         ];
-      } 
-      
+      }
+
       onSelectionChanged({
         componentTypes,
         nodeRef: selectedSceneNodeRef,
@@ -149,14 +162,17 @@ const StateManager: React.FC<SceneComposerInternalProps> = ({
 
   useEffect(() => {
     if (selectedObject3D?.userData.elementId) {
-      const elementId = selectedObject3D?.userData.elementId
+      const elementId = selectedObject3D?.userData.elementId;
       const doAsync = async () => {
         const entities = await knowledgeGraphInterface.findEntitiesByElementId(elementId);
+        let entity: any;
         if (entities.length > 0) {
           console.log('selected entity: ', entities[0]);
-          setSelectedEntity(entities[0]);
+          entity = entities[0];
+          setSelectedEntity(entity);
         }
-      }
+        onGeoObjectClick({ entityId: entity.entityId, elementId: elementId });
+      };
       doAsync();
     }
   }, [selectedObject3D]);

@@ -40,7 +40,6 @@ export const GraphPanel: React.FC = () => {
     const nodeRefs = entities
       .map((entity) => {
         const componentIndex = entity.components.findIndex((c) => c.componentTypeId === 'bms.revit.metadata');
-        console.log('found component', entity.components[componentIndex]);
         if (componentIndex !== -1) {
           const propertyIndex = entity.components[componentIndex].properties.findIndex(
             (p) => p.propertyName === 'ElementId',
@@ -59,26 +58,30 @@ export const GraphPanel: React.FC = () => {
   const findEntity = useCallback(() => {
     (async () => {
       const entities = await knowledgeGraphInterface.findEntitiesByName(searchValue);
-      console.log('found entities', entities);
       highlightEntities(entities);
     })();
   }, [searchValue]);
 
   const findRelatedEntities = useCallback(() => {
     (async () => {
-      if (!!selectedEntity) {
-        const related = await knowledgeGraphInterface.findRelatedEntities(selectedEntity, 2);
-        console.log('found related entities', related);
-        highlightEntities(related);
+      const entities = await knowledgeGraphInterface.findEntitiesByName(searchValue);
+      let relatedEntities: TwinMakerEntity[] = [];
+      for (const e of entities) {
+        const related = await knowledgeGraphInterface.findRelatedEntities(e, 2);
+        relatedEntities = relatedEntities.concat(related);
       }
+      highlightEntities(relatedEntities);
     })();
   }, [searchValue]);
 
-  useEffect(() => {
-    if (!!selectedEntity?.entityName) {
-      setSearchValue(selectedEntity.entityName);
-    }
-  },[selectedEntity])
+  const exploreRelatedEntities = useCallback(() => {
+    (async () => {
+      if (selectedEntity) {
+        const related = await knowledgeGraphInterface.exploreEntitiesByEntityId(selectedEntity, 2);
+        highlightEntities(related);
+      }
+    })();
+  }, [selectedEntity]);
 
   return (
     <LogProvider namespace={'SceneNodeInspectorPanel'}>
@@ -89,6 +92,9 @@ export const GraphPanel: React.FC = () => {
               <Input value={searchValue} onChange={(e) => setSearchValue(e.detail.value)} />
               <Button onClick={findEntity}>Find</Button>
               <Button onClick={findRelatedEntities}>Find Related</Button>
+              <Button onClick={exploreRelatedEntities}>
+                {`Explore: ${selectedEntity?.entityName ? selectedEntity.entityName : ''}`}
+              </Button>
             </SpaceBetween>
           </FormField>
         </ExpandableInfoSection>

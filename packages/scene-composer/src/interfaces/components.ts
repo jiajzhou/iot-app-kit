@@ -92,9 +92,16 @@ export interface IWidgetClickEvent {
   additionalComponentData?: AdditionalComponentData[];
 }
 
+export interface IGeoObjectClickEvent {
+  entityId?: string;
+  elementId?: string;
+}
+
 export type WidgetClickEventCallback = (event: IWidgetClickEvent) => void;
 
 export type SelectionChangedEventCallback = (event: ISelectionChangedEvent) => void;
+
+export type GeoObjectClickEventCallback = (event: IGeoObjectClickEvent) => void;
 
 export interface ILightComponent extends ISceneComponent, SceneModels.Component.Light {}
 

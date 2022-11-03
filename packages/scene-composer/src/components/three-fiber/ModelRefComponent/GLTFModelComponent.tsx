@@ -6,7 +6,13 @@ import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader';
 
 import useLifecycleLogging from '../../../logger/react-logger/hooks/useLifecycleLogging';
 import { Vector3, KnownComponentType } from '../../../interfaces';
-import { IModelRefComponentInternal, ISceneNodeInternal, useEditorState, useStore } from '../../../store';
+import {
+  IModelRefComponentInternal,
+  ISceneNodeInternal,
+  useEditorState,
+  useStore,
+  useViewOptionState,
+} from '../../../store';
 import { appendFunction } from '../../../utils/objectUtils';
 import { sceneComposerIdContext } from '../../../common/sceneComposerIdContext';
 import {
@@ -25,11 +31,7 @@ import {
 
 import { useGLTF } from './GLTFLoader';
 
-function processObject(
-  component: IModelRefComponentInternal,
-  obj: THREE.Object3D,
-  options: { maxAnisotropy: number },
-) {
+function processObject(component: IModelRefComponentInternal, obj: THREE.Object3D, options: { maxAnisotropy: number }) {
   cloneMaterials(obj);
   acceleratedRaycasting(obj);
   enableShadow(component, obj, options.maxAnisotropy);
@@ -56,7 +58,7 @@ export const GLTFModelComponent: React.FC<GLTFModelProps> = ({
   const appendSceneNode = useStore(sceneComposerId)((state) => state.appendSceneNode);
   const getObject3DBySceneNodeRef = useStore(sceneComposerId)((state) => state.getObject3DBySceneNodeRef);
   const getSceneNodeByRef = useStore(sceneComposerId)((state) => state.getSceneNodeByRef);
-  const highlightedNodeRefs = useStore(sceneComposerId)((state) => state.noHistoryStates.highlightedNodeRefs);
+  const { highlightedNodeRefs, setHighlightedNodeRefs } = useViewOptionState(sceneComposerId);
   const needUpdate = useRef(false);
 
   const {
@@ -75,6 +77,23 @@ export const GLTFModelComponent: React.FC<GLTFModelProps> = ({
 
   const [lastPointerMove, setLastPointerMove] = useState<number>(Date.now());
 
+  // for a modified version of the useMaterialEffectHook that does lots of objects
+  // no children
+  const originalMaterialMap = useRef({});
+
+  const restoreMaterial = (obj: THREE.Object3D) => {
+    if (obj instanceof THREE.Mesh) {
+      const original = originalMaterialMap.current[obj.uuid];
+      obj.material = original.clone();
+      obj.material.needsUpdate = true;
+    }
+  };
+
+  const cacheMaterial = (obj: THREE.Object3D) => {
+    if (obj instanceof THREE.Mesh && !originalMaterialMap.current[obj.uuid]) {
+      originalMaterialMap.current[obj.uuid] = obj.material.clone();
+    }
+  };
   const CURSOR_VISIBILITY_TIMEOUT = 1000; // 1 second
   const MAX_CLICK_DISTANCE = 2;
 
@@ -127,9 +146,11 @@ export const GLTFModelComponent: React.FC<GLTFModelProps> = ({
 
   const clonedModelScene = useMemo(() => {
     const result = SkeletonUtils.clone(gltf.scene);
-    result.traverse((obj) => processObject(component, obj, { maxAnisotropy }));
+    result.traverse((obj) => {
+      processObject(component, obj, { maxAnisotropy });
+      cacheMaterial(obj);
+    });
 
-    // console.log('dddddddddddddddd');
     invalidate();
     return result;
   }, [gltf, component]);
@@ -145,24 +166,17 @@ export const GLTFModelComponent: React.FC<GLTFModelProps> = ({
     // creation function. To work around the issue, we'll update the shadow setting for each render loop.
 
     if (needUpdate.current && highlightedNodeRefs) {
+      console.log('highlightedNodeRefs', highlightedNodeRefs);
       clonedModelScene.traverse((obj) => {
         enableShadow(component, obj, maxAnisotropy);
 
-        // console.log('!!!!!!!!!process obj', highlightedNodeRefs);
-        // console.log('!!!!!!!!!!!!!!!!!!!!!!!', highlightedNodeRefs);
+        restoreMaterial(obj);
         if (obj.userData.elementId && highlightedNodeRefs.indexOf(obj.userData.elementId) !== -1) {
           if (obj instanceof THREE.Mesh) {
-            // console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
             obj.material.color = new THREE.Color('red');
-            // const vv = new THREE.Vector3();
-            // const a = obj.getWorldPosition(vv);
-            // console.log(obj);
             obj.material.needsUpdate = true;
-          } else {
-            // console.log('cccccccccccccccccccccc');
           }
         } else {
-          // console.log('bbbbbbbbbbbbbbbbbbbbbbbbbb');
           if (obj instanceof THREE.Mesh) {
             obj.material.transparent = true;
             obj.material.opacity = 0.2;
@@ -235,10 +249,14 @@ export const GLTFModelComponent: React.FC<GLTFModelProps> = ({
       }
     }
     if (e.intersections[0]) {
+      const obj = e.intersections[0].object;
       setSelectedObject3D(e.intersections[0].object);
+      if (obj.userData.elementId) {
+        // actually highlights on elementId string not nodeRef which are usually big being a whole scene hierarchy node
+        setHighlightedNodeRefs(obj.userData.elementId);
+      }
     }
   };
-  
 
   return (
     <group name={getComponentGroupName(node.ref, 'GLTF_MODEL')} scale={scale} dispose={null}>

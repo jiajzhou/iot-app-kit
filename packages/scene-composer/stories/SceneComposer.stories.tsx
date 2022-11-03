@@ -251,7 +251,7 @@ const knobsConfigurationDecorator = [
           },
         ]);
       },
-      findEntitiesByElementId: async (elementId: string ) => {
+      findEntitiesByElementId: async (elementId: string) => {
         return Promise.resolve([
           {
             arn: 'arn:aws:iottwinmaker:us-east-1:000503515329:workspace/BMSWorkspace/entity/2e5a36e3-dff5-40a3-9b00-c4cad10f0bd1',
@@ -328,7 +328,17 @@ const knobsConfigurationDecorator = [
             ],
           },
         ]);
-      }
+      },
+      exploreEntitiesByEntityId: async (entity: TwinMakerEntity, numberOfHops: number) => {
+        return Promise.resolve([
+          {
+            entityId: 'related-1-' + entity.entityId,
+          },
+          {
+            entityId: 'related-2-' + entity.entityId,
+          },
+        ]);
+      },
     };
     args.sceneLoader = sceneLoader;
     args.sceneId = sceneId;

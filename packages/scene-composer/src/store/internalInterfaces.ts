@@ -1,6 +1,7 @@
 import { IErrorDetails } from '../common/errors';
 import {
   SelectionChangedEventCallback,
+  GeoObjectClickEventCallback,
   IAnchorComponent,
   ICameraComponent,
   IColorOverlayComponent,
@@ -22,7 +23,6 @@ import {
   KnownComponentType,
   WidgetClickEventCallback,
   ISubModelRefComponent,
-  KnowledgeGraphInterface,
 } from '../interfaces';
 import { MapControls as MapControlsImpl, OrbitControls as OrbitControlsImpl } from '../three/OrbitControls';
 
@@ -61,6 +61,7 @@ export interface IEditorConfig {
   showAssetBrowserCallback?: ShowAssetBrowserCallback;
   onWidgetClick?: WidgetClickEventCallback;
   onSelectionChanged?: SelectionChangedEventCallback;
+  onGeoObjectClick?: GeoObjectClickEventCallback;
 }
 
 /******************************************************************************

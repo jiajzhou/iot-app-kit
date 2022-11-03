@@ -2,7 +2,7 @@ import { SceneLoader } from '@iot-app-kit/source-iottwinmaker';
 import { DataStream, TimeQuery, TimeSeriesData, TimeSeriesDataRequest, Viewport } from '@iot-app-kit/core';
 
 import { IDataBindingTemplate } from './dataBinding';
-import { SelectionChangedEventCallback, WidgetClickEventCallback } from './components';
+import { SelectionChangedEventCallback, WidgetClickEventCallback, GeoObjectClickEventCallback } from './components';
 
 export interface DracoDecoderConfig {
   enable: boolean;
@@ -21,6 +21,7 @@ export interface KnowledgeGraphInterface {
   findEntitiesByName(name: string): Promise<TwinMakerEntity[]>;
   findRelatedEntities(entity: TwinMakerEntity, numberOfHops: number): Promise<TwinMakerEntity[]>;
   findEntitiesByElementId(elementId: string): Promise<TwinMakerEntity[]>;
+  exploreEntitiesByEntityId(entity: TwinMakerEntity, numberOfHops: number): Promise<TwinMakerEntity[]>;
 }
 
 /**
@@ -36,6 +37,7 @@ export interface SceneViewerPropsShared {
 
   onSelectionChanged?: SelectionChangedEventCallback;
   onWidgetClick?: WidgetClickEventCallback;
+  onGeoObjectClick: GeoObjectClickEventCallback;
 
   knowledgeGraphInterface: KnowledgeGraphInterface;
 
