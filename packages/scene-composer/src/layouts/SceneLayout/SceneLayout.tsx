@@ -98,7 +98,12 @@ const SceneLayout: FC<SceneLayoutProps> = ({ isViewing, onPointerMissed, Loading
             {shouldShowPreview && (
               <CameraPreviewTrack ref={renderDisplayRef} title={selectedNode.selectedSceneNode?.name} />
             )}
-            <UnselectableCanvas shadows dpr={window.devicePixelRatio} onPointerMissed={onPointerMissed}>
+            <UnselectableCanvas
+              gl={{ antialias: false }}
+              shadows
+              dpr={window.devicePixelRatio}
+              onPointerMissed={onPointerMissed}
+            >
               <ContextBridge>
                 {/* TODO: Add loading view */}
                 <Suspense fallback={LoadingView}>
