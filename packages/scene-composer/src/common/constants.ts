@@ -122,7 +122,7 @@ export const DEFAULT_CAMERA_CONTROLS_OPTIONS: Pick<CameraControlImpl, 'dampingFa
   {
     dampingFactor: 0.2,
     maxDistance: Infinity,
-    minDistance: 0,
+    minDistance: 0.1,
   };
 export const DEFAULT_CAMERA_POSITION: Vector3 = [5, 5, 5];
 export const DEFAULT_CAMERA_OPTIONS: Pick<THREE.PerspectiveCamera, 'far' | 'fov' | 'near'> = {

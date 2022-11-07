@@ -224,16 +224,24 @@ export function findBestViewingPosition(
     // normal case
     const camera = controls.object as THREE.PerspectiveCamera;
     const currentCameraPosition: THREE.Vector3 = initial ? objectBoundingBox.max : camera.position;
+
     const distanceToTarget = currentCameraPosition.distanceTo(target);
 
-    const minimumDistance = minimumDistanceByGeometry(size, camera);
+    const minDistance = minimumDistanceByGeometry(size, camera);
+    const maxDistance = maximumDistanceByGeometry(size, camera);
 
-    if (distanceToTarget >= minimumDistance) {
+    if (distanceToTarget >= minDistance && distanceToTarget <= maxDistance) {
       position.copy(currentCameraPosition);
     } else {
+      let distance = distanceToTarget;
+      if (distanceToTarget < minDistance) {
+        distance = minDistance;
+      } else if (distanceToTarget > maxDistance) {
+        distance = maxDistance;
+      }
       const newCameraDirection = new THREE.Vector3();
       newCameraDirection.subVectors(currentCameraPosition, target);
-      position.copy(moveDistance(target, newCameraDirection, minimumDistance));
+      position.copy(moveDistance(target, newCameraDirection, distance));
     }
   } else {
     // set the camera to default position if we are unable to calculate one
@@ -254,15 +262,11 @@ function getTweenValueFromVector3(vector3: Vector3 | THREE.Vector3): TweenValueO
 }
 
 function minimumDistanceByGeometry(size: THREE.Vector3, camera: THREE.PerspectiveCamera) {
-  const boundingRadius = size.length() / 2;
+  return 10;
+}
 
-  // account for vertical and horizontal fov can differ
-  const minFov = Math.min(camera.aspect * camera.fov, camera.fov);
-
-  // triangle of hypotenuse from camera to object center, adjacent to tanget point on circle making 90 angle with
-  // opposite that is bounding radius
-  // sin(angle) = opposite/hypotenuse => h = o/sin( of 1/2 FOV angle in radians)
-  return boundingRadius / Math.sin(0.5 * (Math.PI / 180) * minFov);
+function maximumDistanceByGeometry(size: THREE.Vector3, camera: THREE.PerspectiveCamera) {
+  return 100;
 }
 
 function moveDistance(start: THREE.Vector3, direction: THREE.Vector3, distance: number) {

@@ -44,7 +44,7 @@ export type SceneComposerDataOperation =
   | 'setKnowledgeGraphInterface'
   | 'setSelectedEntity';
 
-export type SceneComposerViewOptionOperation = 'toggleMotionIndicatorVisibility';
+export type SceneComposerViewOptionOperation = 'toggleMotionIndicatorVisibility' | 'setElementDecorations';
 
 export type SceneComposerOperation =
   | SceneComposerEditorOperation
@@ -96,4 +96,5 @@ export const SceneComposerOperationTypeMap: Record<SceneComposerOperation, Opera
   setKnowledgeGraphInterface: 'TRANSIENT',
   setSelectedEntity: 'TRANSIENT',
   toggleMotionIndicatorVisibility: 'TRANSIENT',
+  setElementDecorations: 'TRANSIENT',
 };

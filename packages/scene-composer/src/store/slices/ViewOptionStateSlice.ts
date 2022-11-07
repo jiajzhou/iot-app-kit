@@ -1,13 +1,14 @@
 import { GetState, SetState, StoreApi } from 'zustand';
+import { MeshStyle } from '../../interfaces';
 
 import { RootState } from '../Store';
 
 export interface IViewOptionStateSlice {
   motionIndicatorVisible: boolean;
-  highlightedNodeRefs?: string[];
+  elementDecorations?: Record<string, MeshStyle>;
 
   toggleMotionIndicatorVisibility: () => void;
-  setHighlightedNodeRefs: (nodeRefs?: string[]) => void;
+  setElementDecorations: (elementDecorations?: Record<string, MeshStyle>) => void;
 }
 
 export const createViewOptionStateSlice = (
@@ -16,7 +17,7 @@ export const createViewOptionStateSlice = (
   api: StoreApi<RootState>,
 ): IViewOptionStateSlice => ({
   motionIndicatorVisible: true,
-  highlightedNodeRefs: undefined,
+  elementDecorations: undefined,
 
   toggleMotionIndicatorVisibility: () => {
     set((draft) => {
@@ -25,11 +26,10 @@ export const createViewOptionStateSlice = (
     });
   },
 
-  setHighlightedNodeRefs: (nodeRefs) => {
+  setElementDecorations: (elementDecorations) => {
     set((draft) => {
-      draft.noHistoryStates.highlightedNodeRefs = nodeRefs;
-      // TODO: update this
-      draft.lastOperation = 'toggleMotionIndicatorVisibility';
+      draft.noHistoryStates.elementDecorations = elementDecorations;
+      draft.lastOperation = 'setElementDecorations';
     });
   },
 });

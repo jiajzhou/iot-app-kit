@@ -30,6 +30,12 @@ export interface KnowledgeGraphInterface {
  */
 export type GetSceneObjectFunction = (uri: string) => Promise<ArrayBuffer> | null;
 
+export interface MeshStyle {
+  color?: string;
+  opacity?: number;
+  transparent?: boolean;
+}
+
 export interface SceneViewerPropsShared {
   sceneComposerId?: string;
 
@@ -40,6 +46,7 @@ export interface SceneViewerPropsShared {
   onGeoObjectClick: GeoObjectClickEventCallback;
 
   knowledgeGraphInterface: KnowledgeGraphInterface;
+  elementDecorations?: Record<string, MeshStyle>;
 
   /**
    * The data to be visualized by the composer.

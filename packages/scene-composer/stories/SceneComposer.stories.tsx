@@ -4,7 +4,7 @@ import { boolean, select, text, withKnobs } from '@storybook/addon-knobs';
 import { applyMode, Mode, applyDensity, Density } from '@awsui/global-styles';
 import { ComponentStory, ComponentMeta, forceReRender } from '@storybook/react';
 import { initialize, SceneLoader } from '@iot-app-kit/source-iottwinmaker';
-import { useCallback, useRef } from '@storybook/addons';
+import { useCallback, useRef, useState } from '@storybook/addons';
 import str2ab from 'string-to-arraybuffer';
 
 import { SceneComposerInternal, useSceneComposerApi } from '../src/components/SceneComposerInternal';
@@ -55,7 +55,7 @@ const commonLoaders = [
       const sceneId = text('sceneId', '');
       const theme = select('theme', { dark: 'dark', light: 'light' }, 'dark');
       const density = select('density', { compact: 'compact', comfortable: 'comfortable' }, 'comfortable');
-      const mode = select('mode', { Viewing: 'Viewing', Editing: 'Editing' }, 'Editing');
+      const mode = select('mode', { Viewing: 'Viewing', Editing: 'Editing' }, 'Viewing');
       const loadFromAws = boolean('Load from AWS', false);
       localModelToLoad = text('local glb model', 'PALLET_JACK.glb');
 
@@ -441,7 +441,34 @@ export const Default: ComponentStory<typeof SceneComposerInternal> = (
     return args.sceneLoader;
   }, [args.sceneId]);
 
-  return <SceneComposerInternal sceneComposerId='scene1' {...args} sceneLoader={loader} />;
+  const [elementDecorations, setElementDecorations] = useState<Record<string, any>>({
+    '6671403': {
+      color: 'red',
+      transparent: true,
+      opacity: 0.5,
+    },
+  });
+
+  const onGeoObjectClick = (e) => {
+    console.log('3D object selected', e);
+    setElementDecorations({
+      [e.elementId]: {
+        color: 'red',
+        transparent: true,
+        opacity: 0.5,
+      },
+    });
+  };
+
+  return (
+    <SceneComposerInternal
+      sceneComposerId='scene1'
+      {...args}
+      onGeoObjectClick={onGeoObjectClick}
+      elementDecorations={elementDecorations}
+      sceneLoader={loader}
+    />
+  );
 };
 Default.parameters = {};
 Default.decorators = knobsConfigurationDecorator;

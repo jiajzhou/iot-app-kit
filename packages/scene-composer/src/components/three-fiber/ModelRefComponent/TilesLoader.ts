@@ -33,6 +33,7 @@ export function useTiles<T extends string>(path: T, uriModifier?: URIModifier) {
       return uriModifier?.(uriString) ?? uriString;
     };
     tilesRenderer.loadSiblings = false;
+    tilesRenderer.errorThreshold = 100;
 
     const loader = new TwinMakerGLTFLoader(tilesRenderer.manager);
     setupTwinMakerGLTFLoader(loader);

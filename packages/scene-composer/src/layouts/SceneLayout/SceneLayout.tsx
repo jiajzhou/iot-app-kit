@@ -73,10 +73,15 @@ const SceneLayout: FC<SceneLayoutProps> = ({ isViewing, onPointerMissed, Loading
   const leftPanelViewModeProps = {
     [intl.formatMessage({ defaultMessage: 'Hierarchy', description: 'Panel Tab title' })]: <SceneHierarchyPanel />,
   };
-  const rightPanelProps = {
-    [intl.formatMessage({ defaultMessage: 'Inspector', description: 'Panel Tab title' })]: <SceneNodeInspectorPanel />,
-    Graph: <GraphPanel />,
-  };
+  const rightPanelProps: { [x: string]: JSX.Element } = isViewing
+    ? {
+        Graph: <GraphPanel />,
+      }
+    : {
+        [intl.formatMessage({ defaultMessage: 'Inspector', description: 'Panel Tab title' })]: (
+          <SceneNodeInspectorPanel />
+        ),
+      };
 
   const leftPanel = <LeftPanel {...leftPanelEditModeProps} />;
 
@@ -113,7 +118,7 @@ const SceneLayout: FC<SceneLayoutProps> = ({ isViewing, onPointerMissed, Loading
       modalContent={<MessageModal />}
       header={!isViewing && <MenuBar />}
       leftPanel={isViewing ? viewingModeLeftPanel : leftPanel}
-      rightPanel={rightPanel}
+      rightPanel={isViewing ? null : rightPanel}
       topBar={<TopBar />}
     />
   );

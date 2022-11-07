@@ -49,6 +49,7 @@ const StateManager: React.FC<SceneComposerInternalProps> = ({
   onWidgetClick,
   onSelectionChanged,
   onGeoObjectClick,
+  elementDecorations,
   knowledgeGraphInterface,
   dataStreams,
   queries,
@@ -65,6 +66,7 @@ const StateManager: React.FC<SceneComposerInternalProps> = ({
     setDataInput,
     setDataBindingTemplate,
     setKnowledgeGraphInterface,
+    setElementDecorations,
     loadScene,
     sceneLoaded,
     selectedSceneNodeRef,
@@ -73,7 +75,39 @@ const StateManager: React.FC<SceneComposerInternalProps> = ({
     getObject3DBySceneNodeRef,
     selectedObject3D,
     setSelectedEntity,
-  } = useStore(sceneComposerId)((state) => state);
+  } = useStore(sceneComposerId)(
+    ({
+      setEditorConfig,
+      setDataInput,
+      setDataBindingTemplate,
+      setKnowledgeGraphInterface,
+      noHistoryStates,
+      loadScene,
+      sceneLoaded,
+      selectedSceneNodeRef,
+      setSelectedSceneNodeRef,
+      getSceneNodeByRef,
+      getObject3DBySceneNodeRef,
+      selectedObject3D,
+      setSelectedEntity,
+    }) => {
+      return {
+        setEditorConfig,
+        setDataInput,
+        setDataBindingTemplate,
+        setKnowledgeGraphInterface,
+        setElementDecorations: noHistoryStates.setElementDecorations,
+        loadScene,
+        sceneLoaded,
+        selectedSceneNodeRef,
+        setSelectedSceneNodeRef,
+        getSceneNodeByRef,
+        getObject3DBySceneNodeRef,
+        selectedObject3D,
+        setSelectedEntity,
+      };
+    },
+  );
   const [sceneContentUri, setSceneContentUri] = useState<string>('');
   const [sceneContent, setSceneContent] = useState<string>('');
   const [loadSceneError, setLoadSceneError] = useState<Error | undefined>();
@@ -325,6 +359,10 @@ const StateManager: React.FC<SceneComposerInternalProps> = ({
     }
   }, [knowledgeGraphInterface]);
 
+  useEffect(() => {
+    setElementDecorations(elementDecorations);
+  }, [elementDecorations]);
+
   // Throw error to be captured by ErrorBoundary and render error view
   useEffect(() => {
     if (loadSceneError) {
@@ -336,6 +374,7 @@ const StateManager: React.FC<SceneComposerInternalProps> = ({
     (e: ThreeEvent<PointerEvent>) => {
       // deselect selected node on click
       if (e.type === 'click') {
+        console.log('missed pointer event');
         setSelectedSceneNodeRef(undefined);
       }
     },

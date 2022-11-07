@@ -33,18 +33,18 @@ export const ViewCursorWidget = () => {
 
   /* istanbul ignore next */
   useFrame(({ raycaster, scene }) => {
-    const sceneMeshes: THREEObject3D[] = [];
-    scene.traverse((child) => {
-      return shape.id !== child.id && (child as THREEMesh).isMesh && child.type !== 'TransformControlsPlane'
-        ? sceneMeshes.push(child as THREEMesh)
-        : null;
-    });
-    const intersects = raycaster.intersectObjects(sceneMeshes, false);
-    if (intersects.length) {
-      const n = getIntersectionTransform(intersects[0]);
-      shape.lookAt(n.normal as THREEVector3);
-      shape.position.copy(n.position);
-    }
+    // const sceneMeshes: THREEObject3D[] = [];
+    // scene.traverse((child) => {
+    //   return shape.id !== child.id && (child as THREEMesh).isMesh && child.type !== 'TransformControlsPlane'
+    //     ? sceneMeshes.push(child as THREEMesh)
+    //     : null;
+    // });
+    // const intersects = raycaster.intersectObjects(sceneMeshes, false);
+    // if (intersects.length) {
+    //   const n = getIntersectionTransform(intersects[0]);
+    //   shape.lookAt(n.normal as THREEVector3);
+    //   shape.position.copy(n.position);
+    // }
   });
 
   useEffect(() => {

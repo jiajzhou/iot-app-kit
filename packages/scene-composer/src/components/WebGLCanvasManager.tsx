@@ -76,15 +76,6 @@ export const WebGLCanvasManager: React.FC = () => {
     }
   }, [gridHelperRef.current]);
 
-  const a = new THREE.Box3(
-    new THREE.Vector3(852.844970703125, -500.55322265625, 24),
-    new THREE.Vector3(882.470275878906, -453.5801086425781, 26),
-  );
-  const size = new THREE.Vector3();
-  const center = new THREE.Vector3();
-  a.getSize(size);
-  a.getCenter(center);
-
   return (
     <React.Fragment>
       <EditorMainCamera />

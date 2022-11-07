@@ -9,7 +9,7 @@ module.exports = {
     '@storybook/preset-scss',
     'storybook-addon-toolbar-actions/register',
   ],
-  staticDirs: ['../dist','../public'],
+  staticDirs: ['../dist', '../public'],
   typescript: {
     // also valid 'react-docgen-typescript' | false
 
@@ -27,19 +27,22 @@ module.exports = {
     // You can change the configuration based on that.
     // 'PRODUCTION' is used when building the static version of storybook.
     // Make whatever fine-grained changes you need
-    config.module.rules.push({
-      test: /(translations).*\.json$/,
-      loader: path.resolve(__dirname, '../tools/totoro-loader.js'),
-      /*options: {
+    config.module.rules.push(
+      {
+        test: /(translations).*\.json$/,
+        loader: path.resolve(__dirname, '../tools/totoro-loader.js'),
+        /*options: {
         type: "module",
       },*/
-    }, {
-      test: /\.hdr$/,
-      loader: 'file-loader',
-      options: {
-        name: '[path][name].[ext]'
-      }
-    });
+      },
+      {
+        test: /\.hdr$/,
+        loader: 'file-loader',
+        options: {
+          name: '[path][name].[ext]',
+        },
+      },
+    );
     // Return the altered config
     return config;
   },

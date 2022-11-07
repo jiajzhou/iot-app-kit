@@ -17,35 +17,17 @@
   },
   "nodes": [
     {
-      "name": "Site",
+      "name": "MEP",
       "transform": {
-        "position": [0, 40, 0],
-        "rotation": [0, 0, 0],
+        "position": [-167.6, -0.425, 132.1],
+        "rotation": [0, 0.5337775357959298, 0],
         "scale": [1, 1, 1]
       },
       "transformConstraint": {},
       "components": [
         {
           "type": "ModelRef",
-          "uri": "SFS-B1-draco-1365902/tileset.json",
-          "modelType": "Tiles3D",
-          "unitOfMeasure": "meters"
-        }
-      ],
-      "properties": {}
-    },
-    {
-      "name": "Dining Room",
-      "transform": {
-        "position": [0, 40, 0],
-        "rotation": [0, 0, 0],
-        "scale": [1, 1, 1]
-      },
-      "transformConstraint": {},
-      "components": [
-        {
-          "type": "ModelRef",
-          "uri": "SFS-dining.glb",
+          "uri": "optimize_1.glb",
           "modelType": "GLB",
           "unitOfMeasure": "meters"
         }
@@ -53,7 +35,7 @@
       "properties": {}
     }
   ],
-  "rootNodeIndexes": [0, 1],
+  "rootNodeIndexes": [0],
   "cameras": [
     {
       "cameraType": "Perspective",

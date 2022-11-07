@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useRef, useState, useCallback } from 'react';
 import { invalidate, ThreeEvent, useFrame, useThree } from '@react-three/fiber';
 import { SkeletonUtils } from 'three-stdlib';
 import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader';
@@ -32,9 +32,9 @@ import {
 import { useGLTF } from './GLTFLoader';
 
 function processObject(component: IModelRefComponentInternal, obj: THREE.Object3D, options: { maxAnisotropy: number }) {
-  cloneMaterials(obj);
-  acceleratedRaycasting(obj);
-  enableShadow(component, obj, options.maxAnisotropy);
+  // cloneMaterials(obj);
+  // acceleratedRaycasting(obj);
+  // enableShadow(component, obj, options.maxAnisotropy);
 
   obj.userData.isOriginal = true; // This is important to the SubModelSelection tool, it's used to filter out geomtry we've added with our
 }
@@ -58,48 +58,25 @@ export const GLTFModelComponent: React.FC<GLTFModelProps> = ({
   const appendSceneNode = useStore(sceneComposerId)((state) => state.appendSceneNode);
   const getObject3DBySceneNodeRef = useStore(sceneComposerId)((state) => state.getObject3DBySceneNodeRef);
   const getSceneNodeByRef = useStore(sceneComposerId)((state) => state.getSceneNodeByRef);
-  const { highlightedNodeRefs, setHighlightedNodeRefs } = useViewOptionState(sceneComposerId);
-  const needUpdate = useRef(false);
+  const { elementDecorations } = useViewOptionState(sceneComposerId);
 
-  const {
-    isEditing,
-    addingWidget,
-    setAddingWidget,
-    cursorLookAt,
-    cursorVisible,
-    setCursorPosition,
-    setCursorLookAt,
-    setCursorVisible,
-    setSelectedObject3D,
-  } = useEditorState(sceneComposerId);
-
-  const [startingPointerPosition, setStartingPointerPosition] = useState<THREE.Vector2>(new THREE.Vector2());
-
-  const [lastPointerMove, setLastPointerMove] = useState<number>(Date.now());
+  const { setSelectedObject3D, selectedObject3D, setCameraTarget, mainCameraObject } = useEditorState(sceneComposerId);
 
   // for a modified version of the useMaterialEffectHook that does lots of objects
   // no children
-  const originalMaterialMap = useRef({});
+  const originalMaterialMap = useRef<Record<string, THREE.Material>>({});
 
-  const restoreMaterial = (obj: THREE.Object3D) => {
+  const cloneOriginalMaterial = useCallback((obj: THREE.Object3D) => {
     if (obj instanceof THREE.Mesh) {
-      const original = originalMaterialMap.current[obj.uuid];
-      obj.material = original.clone();
-      obj.material.needsUpdate = true;
-    }
-  };
+      if (!originalMaterialMap.current[obj.uuid]) {
+        // save a copy of the original material
+        originalMaterialMap.current[obj.uuid] = obj.material.clone();
+      }
 
-  const cacheMaterial = (obj: THREE.Object3D) => {
-    if (obj instanceof THREE.Mesh && !originalMaterialMap.current[obj.uuid]) {
-      originalMaterialMap.current[obj.uuid] = obj.material.clone();
+      // clone the original material. Note that because mesh can share materials, we must clone before update it.
+      obj.material = originalMaterialMap.current[obj.uuid].clone();
     }
-  };
-  const CURSOR_VISIBILITY_TIMEOUT = 1000; // 1 second
-  const MAX_CLICK_DISTANCE = 2;
-
-  useEffect(() => {
-    setCursorVisible(hiddenWhileImmersive || !!addingWidget);
-  }, [hiddenWhileImmersive, addingWidget]);
+  }, []);
 
   const gltf = useGLTF(
     component.uri,
@@ -148,7 +125,6 @@ export const GLTFModelComponent: React.FC<GLTFModelProps> = ({
     const result = SkeletonUtils.clone(gltf.scene);
     result.traverse((obj) => {
       processObject(component, obj, { maxAnisotropy });
-      cacheMaterial(obj);
     });
 
     invalidate();
@@ -156,53 +132,40 @@ export const GLTFModelComponent: React.FC<GLTFModelProps> = ({
   }, [gltf, component]);
 
   useEffect(() => {
-    setTimeout(() => {
-      needUpdate.current = true;
-    }, 100);
-  }, [gltf, component, highlightedNodeRefs]);
+    // traverse objects and decorate elements
+    clonedModelScene.traverse((obj) => {
+      // update mesh
+      if (obj instanceof THREE.Mesh) {
+        if (elementDecorations && elementDecorations[obj.userData.elementId]) {
+          // clone original material before decoration
+          cloneOriginalMaterial(obj);
 
-  useFrame(() => {
-    // TODO: Optimize this loop. Currently, the shadow setting is not applied when only setting in the clonedModelScene
-    // creation function. To work around the issue, we'll update the shadow setting for each render loop.
-
-    if (needUpdate.current && highlightedNodeRefs) {
-      console.log('highlightedNodeRefs', highlightedNodeRefs);
-      clonedModelScene.traverse((obj) => {
-        enableShadow(component, obj, maxAnisotropy);
-
-        restoreMaterial(obj);
-        if (obj.userData.elementId && highlightedNodeRefs.indexOf(obj.userData.elementId) !== -1) {
-          if (obj instanceof THREE.Mesh) {
-            obj.material.color = new THREE.Color('red');
-            obj.material.needsUpdate = true;
+          const style = elementDecorations[obj.userData.elementId];
+          if (style.transparent) {
+            if (!obj.material.transparent) {
+              obj.material.transparent = true;
+              // need recompile shader
+              obj.material.needsUpdate = true;
+            }
+            // material may already be transparent, multiply the opacity
+            obj.material.opacity = obj.material.opacity * (style.opacity ?? 1.0);
           }
+
+          if (style.color) {
+            obj.material.color = new THREE.Color(style.color);
+          }
+
+          obj.userData.decorated = true;
         } else {
-          if (obj instanceof THREE.Mesh) {
-            obj.material.transparent = true;
-            obj.material.opacity = 0.2;
-            obj.material.needsUpdate = true;
+          // restore original material if the object was decorated before
+          if (obj.userData.decorated) {
+            cloneOriginalMaterial(obj);
+            obj.userData.decorated = false;
           }
         }
-      });
-      needUpdate.current = false;
-    }
-    // if ((obj as THREE.Mesh).material) {
-    //   const mesh = obj as THREE.Mesh;
-
-    //   if (Array.isArray(mesh.material)) {
-    //     mesh.material.forEach((material) => {
-    //       material.colorWrite = !hiddenWhileImmersive;
-    //     });
-    //   } else {
-    //     (mesh.material as THREE.Material).colorWrite = !hiddenWhileImmersive;
-    //   }
-    // }
-    // });
-
-    // if (Date.now() - lastPointerMove >= CURSOR_VISIBILITY_TIMEOUT && !addingWidget && cursorVisible) {
-    //   setCursorVisible(false);
-    // }
-  });
+      }
+    });
+  }, [elementDecorations, clonedModelScene]);
 
   let scale: Vector3 = [1, 1, 1];
   if (component.localScale) {
@@ -212,55 +175,38 @@ export const GLTFModelComponent: React.FC<GLTFModelProps> = ({
     scale = [factor, factor, factor];
   }
 
-  const onPointerDown = (e: ThreeEvent<PointerEvent>) => {
-    setStartingPointerPosition(new THREE.Vector2(e.screenX, e.screenY));
-  };
+  const onPointerDown = (e: ThreeEvent<MouseEvent>) => {
+    if (e.button !== 0) {
+      return;
+    }
 
-  const handleAddWidget = (e: ThreeEvent<MouseEvent>) => {
-    if (addingWidget) {
-      const hierarchicalParent = findNearestViableParentAncestorNodeRef(e.object);
-      const hierarchicalParentNode = getSceneNodeByRef(hierarchicalParent?.userData.nodeRef);
-      let physicalParent = hierarchicalParent;
-      if (findComponentByType(hierarchicalParentNode, KnownComponentType.SubModelRef)) {
-        while (physicalParent) {
-          if (physicalParent.userData.componentTypes?.includes(KnownComponentType.ModelRef)) break;
-          physicalParent = physicalParent.parent as THREE.Object3D<Event>;
-        }
-      }
-      const { position } = getIntersectionTransform(e.intersections[0]);
-      const newWidgetNode = createNodeWithPositionAndNormal(
-        addingWidget,
-        position,
-        cursorLookAt,
-        physicalParent,
-        hierarchicalParent?.userData.nodeRef,
-      );
-      appendSceneNode(newWidgetNode);
-      setAddingWidget(undefined);
+    if (e.intersections[0].object === selectedObject3D) {
       e.stopPropagation();
-    }
-  };
+      // focus on the object
+      const position = new THREE.Vector3();
+      mainCameraObject?.getWorldPosition(position);
+      const target = new THREE.Vector3();
+      selectedObject3D.getWorldPosition(target);
 
-  const onPointerUp = (e: ThreeEvent<MouseEvent>) => {
-    const currentPosition = new THREE.Vector2(e.screenX, e.screenY);
-    if (startingPointerPosition.distanceTo(currentPosition) <= MAX_CLICK_DISTANCE) {
-      if (isEditing() && addingWidget) {
-        handleAddWidget(e);
-      }
+      setCameraTarget(
+        { position: [position.x, position.y, position.z], target: [target.x, target.y, target.z] },
+        'transition',
+      );
+
+      return;
     }
+
     if (e.intersections[0]) {
       const obj = e.intersections[0].object;
-      setSelectedObject3D(e.intersections[0].object);
-      if (obj.userData.elementId) {
-        // actually highlights on elementId string not nodeRef which are usually big being a whole scene hierarchy node
-        setHighlightedNodeRefs(obj.userData.elementId);
-      }
+      setSelectedObject3D(obj);
+
+      e.stopPropagation();
     }
   };
 
   return (
     <group name={getComponentGroupName(node.ref, 'GLTF_MODEL')} scale={scale} dispose={null}>
-      <primitive object={clonedModelScene} onPointerDown={onPointerDown} onPointerUp={onPointerUp} />
+      <primitive object={clonedModelScene} onPointerDown={onPointerDown} />
     </group>
   );
 };

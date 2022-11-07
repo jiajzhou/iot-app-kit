@@ -149,9 +149,9 @@ const nodeErrorStateSelector = (state: RootState) => ({
 
 const viewOptionStateSelector = (state: RootState) => ({
   motionIndicatorVisible: state.noHistoryStates.motionIndicatorVisible,
-  highlightedNodeRefs: state.noHistoryStates.highlightedNodeRefs,
+  elementDecorations: state.noHistoryStates.elementDecorations,
   toggleMotionIndicatorVisibility: state.noHistoryStates.toggleMotionIndicatorVisibility,
-  setHighlightedNodeRefs: state.noHistoryStates.setHighlightedNodeRefs,
+  setElementDecorations: state.noHistoryStates.setElementDecorations,
 });
 
 /**
