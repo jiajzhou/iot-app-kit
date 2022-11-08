@@ -38,11 +38,7 @@ export type SceneComposerDocumentOperation =
   | 'setSceneProperty'
   | 'clearTemplatizedDataBindings';
 
-export type SceneComposerDataOperation =
-  | 'setDataInput'
-  | 'setDataBindingTemplate'
-  | 'setKnowledgeGraphInterface'
-  | 'setSelectedEntity';
+export type SceneComposerDataOperation = 'setDataInput' | 'setDataBindingTemplate' | 'setSelectedEntity';
 
 export type SceneComposerViewOptionOperation = 'toggleMotionIndicatorVisibility' | 'setElementDecorations';
 
@@ -93,7 +89,6 @@ export const SceneComposerOperationTypeMap: Record<SceneComposerOperation, Opera
   setLoadingModelState: 'TRANSIENT',
   setDataInput: 'TRANSIENT',
   setDataBindingTemplate: 'TRANSIENT',
-  setKnowledgeGraphInterface: 'TRANSIENT',
   setSelectedEntity: 'TRANSIENT',
   toggleMotionIndicatorVisibility: 'TRANSIENT',
   setElementDecorations: 'TRANSIENT',

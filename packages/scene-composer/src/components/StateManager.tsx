@@ -50,7 +50,6 @@ const StateManager: React.FC<SceneComposerInternalProps> = ({
   onSelectionChanged,
   onGeoObjectClick,
   elementDecorations,
-  knowledgeGraphInterface,
   dataStreams,
   queries,
   viewport,
@@ -65,7 +64,6 @@ const StateManager: React.FC<SceneComposerInternalProps> = ({
     setEditorConfig,
     setDataInput,
     setDataBindingTemplate,
-    setKnowledgeGraphInterface,
     setElementDecorations,
     loadScene,
     sceneLoaded,
@@ -80,7 +78,6 @@ const StateManager: React.FC<SceneComposerInternalProps> = ({
       setEditorConfig,
       setDataInput,
       setDataBindingTemplate,
-      setKnowledgeGraphInterface,
       noHistoryStates,
       loadScene,
       sceneLoaded,
@@ -95,7 +92,6 @@ const StateManager: React.FC<SceneComposerInternalProps> = ({
         setEditorConfig,
         setDataInput,
         setDataBindingTemplate,
-        setKnowledgeGraphInterface,
         setElementDecorations: noHistoryStates.setElementDecorations,
         loadScene,
         sceneLoaded,
@@ -342,12 +338,6 @@ const StateManager: React.FC<SceneComposerInternalProps> = ({
       setDataBindingTemplate(dataBindingTemplate);
     }
   }, [dataBindingTemplate]);
-
-  useEffect(() => {
-    if (knowledgeGraphInterface) {
-      setKnowledgeGraphInterface(knowledgeGraphInterface);
-    }
-  }, [knowledgeGraphInterface]);
 
   useEffect(() => {
     setElementDecorations(elementDecorations);

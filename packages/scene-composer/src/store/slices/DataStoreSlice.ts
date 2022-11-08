@@ -1,16 +1,14 @@
 import { GetState, SetState, StoreApi } from 'zustand';
 
-import { IDataInput, IDataBindingTemplate, KnowledgeGraphInterface, TwinMakerEntity } from '../../interfaces';
+import { IDataInput, IDataBindingTemplate, TwinMakerEntity } from '../../interfaces';
 import { RootState } from '../Store';
 
 export interface IDataStoreSlice {
   dataInput?: IDataInput;
   dataBindingTemplate?: IDataBindingTemplate;
-  knowledgeGraphInterface?: KnowledgeGraphInterface;
   selectedEntity?: TwinMakerEntity;
 
   setDataInput: (dataInput?: IDataInput) => void;
-  setKnowledgeGraphInterface: (knowledgeGraphInterface?: KnowledgeGraphInterface) => void;
   setDataBindingTemplate: (dataBindingTemplate: IDataBindingTemplate) => void;
   setSelectedEntity: (entity: TwinMakerEntity) => void;
 }
@@ -21,19 +19,11 @@ export const createDataStoreSlice = (
   api: StoreApi<RootState>,
 ): IDataStoreSlice => ({
   dataInput: undefined,
-  knowledgeGraphInterface: undefined,
 
   setDataInput: (dataInput) => {
     set((draft) => {
       draft.dataInput = dataInput;
       draft.lastOperation = 'setDataInput';
-    });
-  },
-
-  setKnowledgeGraphInterface: (knowledgeGraphInterface) => {
-    set((draft) => {
-      draft.knowledgeGraphInterface = knowledgeGraphInterface;
-      draft.lastOperation = 'setKnowledgeGraphInterface';
     });
   },
 

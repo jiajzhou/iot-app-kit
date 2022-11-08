@@ -17,14 +17,6 @@ export interface SceneViewerConfig {
 // TODO: refine the interface
 export type TwinMakerEntity = any;
 
-export interface KnowledgeGraphInterface {
-  findEntityByEntityId(entityId: string): Promise<TwinMakerEntity[]>;
-  findEntitiesByName(name: string): Promise<TwinMakerEntity[]>;
-  findRelatedEntities(entity: TwinMakerEntity, numberOfHops: number): Promise<TwinMakerEntity[]>;
-  findEntitiesByElementId(elementId: string): Promise<TwinMakerEntity[]>;
-  exploreEntitiesByEntityId(entity: TwinMakerEntity, numberOfHops: number): Promise<TwinMakerEntity[]>;
-}
-
 /**
  * @uri URI string
  * @return it's null if GetSceneObjectFunction can't handle the URI type, otherwise, a promise will be returned.
@@ -46,7 +38,6 @@ export interface SceneViewerPropsShared {
   onWidgetClick?: WidgetClickEventCallback;
   onGeoObjectClick: GeoObjectClickEventCallback;
 
-  knowledgeGraphInterface: KnowledgeGraphInterface;
   elementDecorations?: Record<string, MeshStyle>;
 
   /**
