@@ -197,17 +197,7 @@ const StateManager: React.FC<SceneComposerInternalProps> = ({
   useEffect(() => {
     if (selectedObject3D?.userData.elementId) {
       const elementId = selectedObject3D?.userData.elementId;
-      const doAsync = async () => {
-        const entities = await knowledgeGraphInterface.findEntitiesByElementId(elementId);
-        let entity: any;
-        if (entities.length > 0) {
-          console.log('selected entity: ', entities[0]);
-          entity = entities[0];
-          setSelectedEntity(entity);
-        }
-        onGeoObjectClick({ entityId: entity.entityId, elementId: elementId });
-      };
-      doAsync();
+      onGeoObjectClick({ elementId: elementId });
     }
   }, [selectedObject3D]);
 
