@@ -18,6 +18,7 @@ export interface SceneViewerConfig {
 export type TwinMakerEntity = any;
 
 export interface KnowledgeGraphInterface {
+  findEntityByEntityId(entityId: string): Promise<TwinMakerEntity[]>;
   findEntitiesByName(name: string): Promise<TwinMakerEntity[]>;
   findRelatedEntities(entity: TwinMakerEntity, numberOfHops: number): Promise<TwinMakerEntity[]>;
   findEntitiesByElementId(elementId: string): Promise<TwinMakerEntity[]>;
