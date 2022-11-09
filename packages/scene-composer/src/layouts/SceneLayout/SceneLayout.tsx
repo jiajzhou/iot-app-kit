@@ -99,7 +99,7 @@ const SceneLayout: FC<SceneLayoutProps> = ({ isViewing, onPointerMissed, Loading
               <CameraPreviewTrack ref={renderDisplayRef} title={selectedNode.selectedSceneNode?.name} />
             )}
             <UnselectableCanvas
-              gl={{ antialias: false }}
+              gl={{ antialias: true }}
               shadows
               dpr={window.devicePixelRatio}
               onPointerMissed={onPointerMissed}

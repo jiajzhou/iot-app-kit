@@ -11,9 +11,13 @@ interface VisibilityToggleProps extends ButtonProps {
 }
 
 const VisibilityToggle: FC<VisibilityToggleProps> = ({ visible = true, onToggle = () => {}, ...props }) => {
-  const onToggleHandler = useCallback(() => {
-    onToggle(!visible);
-  }, [visible]);
+  const onToggleHandler = useCallback(
+    (e: CustomEvent<ButtonProps.ClickDetail>) => {
+      e.stopPropagation();
+      onToggle(!visible);
+    },
+    [visible],
+  );
 
   return (
     <Button
